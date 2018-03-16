@@ -1,0 +1,21 @@
+{
+  "name": "@ncd/ncd-red-comm",
+  "version": "1.0.2",
+  "description": "NCD Communications configuration node for node-red",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Trey Felton",
+  "license": "ISC",
+  "node-red": {
+    "nodes": {
+      "ncd-comm": "ncd-comm.js"
+    }
+  },
+  "dependencies": {
+    "i2c-bus": "^3.0.0",
+    "promise-queue": "^2.2.5",
+    "serialport": "^5.0.0"
+  }
+}
