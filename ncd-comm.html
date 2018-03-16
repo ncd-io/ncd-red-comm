@@ -1,0 +1,30 @@
+<script type="text/javascript">
+    RED.nodes.registerType('ncd-comm',{
+        category: 'config',
+        defaults: {
+            bus: {value:""},
+        },
+        label: function() {
+            return this.bus;
+        },
+		oneditprepare: function() {
+			$.getJSON('ncd/i2c-bus/list', function(busses) {
+				if (busses.length !== 0) {
+					busses.forEach((bus) => {
+						$('<option/>',{
+							'value': bus,
+							'text': bus
+						}).appendTo('#node-config-input-bus');
+					});
+			   }
+			});
+		},
+    });
+</script>
+
+<script type="text/x-red" data-template-name="ncd-comm">
+    <div class="form-row">
+        <label for="node-config-input-bus"><i class="icon-bookmark"></i> I2C Bus</label>
+        <select id="node-config-input-bus">
+    </div>
+</script>
