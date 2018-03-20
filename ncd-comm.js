@@ -1,12 +1,16 @@
 "use strict";
 
 const execSync = require('child_process').execSync;
-var i2c = require('i2c-bus');
-var sp = require('serialport');
-var events = require("events");
-var Queue = require("promise-queue");
+const i2c = require('i2c-bus');
+const sp = require('serialport');
+const events = require("events");
+const Queue = require("promise-queue");
 
 module.exports = function(RED) {
+	if(typeof RED.nodes == 'undefined'){
+		return NcdI2C;
+	}
+
 	var i2cPool = {};
     function NcdI2CConfig(n) {
         RED.nodes.createNode(this,n);
