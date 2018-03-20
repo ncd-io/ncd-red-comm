@@ -1,14 +1,16 @@
 "use strict";
 
 const execSync = require('child_process').execSync;
-const i2c = require('i2c-bus');
+var i2c;
 const sp = require('serialport');
 const events = require("events");
 const Queue = require("promise-queue");
 
 module.exports = function(RED) {
-	if(typeof RED.nodes == 'undefined'){
-		return NcdI2C;
+	try{
+		i2c = require('i2c-bus');
+	}catch(e){
+		i2c = false;
 	}
 
 	var i2cPool = {};
@@ -29,15 +31,17 @@ module.exports = function(RED) {
     }
     RED.nodes.registerType("ncd-comm", NcdI2CConfig);
 	RED.httpAdmin.get("/ncd/i2c-bus/list", RED.auth.needsPermission('serial.read'), function(req,res) {
-		var cmd = execSync('i2cdetect -l');
-		var busses = [];
-		cmd.toString().split("\n").forEach((ln) => {
-			var bus = ln.toString().split('	')[0];
-			if(bus.indexOf('i2c') == 0){
-				busses.push(bus);
-			}
-		});
 
+		var busses = [];
+		if(i2c){
+			var cmd = execSync('i2cdetect -l');
+			cmd.toString().split("\n").forEach((ln) => {
+				var bus = ln.toString().split('	')[0];
+				if(bus.indexOf('i2c') == 0){
+					busses.push(bus);
+				}
+			});
+		}
 		sp.list().then((ports) => {
 			ports.forEach((p) => {
 				if(p.manufacturer == 'FTDI') busses.push(p.comName);
