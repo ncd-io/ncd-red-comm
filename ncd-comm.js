@@ -45,7 +45,8 @@ module.exports = function(RED) {
 		}
 		sp.list().then((ports) => {
 			ports.forEach((p) => {
-				if(p.manufacturer == 'FTDI') busses.push(p.comName);
+				//if(p.manufacturer == 'FTDI') busses.push(p.comName);
+				busses.push(p.comName);
 			});
 		}).catch((err) => {
 
@@ -121,10 +122,10 @@ class NcdSerialI2C{
 					wire.queueCBs = {fulfill: false, reject: false};
 					var payload = wire.buff.slice(2, -1);
 					wire.buff = [];
-					console.log(payload);
+					//console.log(payload);
 					fulfill(payload);
 				}else if(valid !== false){
-					console.log([valid]);
+					//console.log([valid]);
 					wire.buff = [];
 					var reject = wire.queueCBs.reject;
 					wire.queueCBs = {fulfill: false, reject: false};
@@ -138,38 +139,29 @@ class NcdSerialI2C{
 		});
 	}
 	readBytes(addr, reg, length){
-		addr = addr*2+1;
-		return this.send([188, this.bus, 2, addr, reg, length], length);
+		return this.send([addr*2, reg, 0], [addr*2+1, length]);
 	}
 	readByte(addr, reg){
-		addr = addr*2+1;
-		var wire = this;
-		return new Promise((fulfill, reject) => {
-			wire.send([188, wire.bus, 2, addr, reg, 1], 1).then((b) => {
-				fulfill(b[0]);
-			}).catch(reject);
-		})
+		return this.readBytes(addr, reg, 1);
 	}
 	writeByte(addr, byte){
-		addr *= 2;
-		return this.send([188, this.bus, 2, addr, byte, 0], false);
+		return this.send([addr*2, byte, 0]);
 	}
 	writeBytes(addr, reg, bytes){
-		addr *= 2;
 		if(bytes.constructor != Array){
-			return this.send([188, this.bus, 3, addr, reg, bytes, 0], false);
+			return this.send([addr*2, reg, bytes, 0]);
 		}else{
-			var payload = [188, this.bus, 2+bytes.length, addr, reg];
+			var payload = [addr*2, reg];
 			payload.push.apply(payload, bytes);
 			payload.push(0);
-			return this.send(payload, false);
+			return this.send(payload);
 		}
 	}
 	buildPacket(payload){
-		var packet = [170, payload.length];
+		var packet = [170, payload.length+3, 188, this.bus, payload.length-1];
 		packet.push.apply(packet, payload);
 		packet.push(packet.reduce((t,i) => t+i)&255);
-		return packet;
+		return Buffer.from(packet);
 	}
 	validate(){
 		if(this.buff.length){
@@ -182,7 +174,6 @@ class NcdSerialI2C{
 					}else if(this.buff[2] == 188){
 						return {'i2c error': this.buff};
 					}
-					console.log(this.buff);
 					return true;
 				}
 			}else{
@@ -191,26 +182,23 @@ class NcdSerialI2C{
 		}
 		return false;
 	}
-	parsePacket(packet){
-
-	}
-	send(payload){
-		var wire = this;
-		var packet = this.buildPacket(payload);
-		return this.queue.add(() => {
-			return new Promise((fulfill, reject) => {
-				var buffer = Buffer.from(packet);
-				wire.comm.write(buffer, (err) => {
-					if(err){
-						reject(err);
-					}else{
-						console.log(['sending', buffer]);
-						wire.queueCBs.reject = reject;
-						wire.queueCBs.fulfill = fulfill;
-					}
+	send(...payloads){
+		var wire = this,
+			p;
+		payloads.forEach((payload) => {
+			p = this.queue.add(() => {
+				return new Promise((fulfill, reject) => {
+					wire.comm.write(this.buildPacket(payload), (err) => {
+						if(err) reject(err);
+						else{
+							wire.queueCBs.reject = reject;
+							wire.queueCBs.fulfill = fulfill;
+						}
+					});
 				});
 			});
 		});
+		return p;
 	}
 }
 class NcdI2C{
