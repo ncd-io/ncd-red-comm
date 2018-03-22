@@ -55,11 +55,92 @@ module.exports = {
 		close(cb){ this.serial.close(cb); }
 		write(m,cb){ this.serial.write(m, cb); }
 	},
+	UsbI2C: class UsbI2C{
+		constructor(serial){
+			this.comm = serial;
+			this.buff = [];
+			this.queue = new Queue(1);
+			this.queueCBs = {fulfill: false, reject: false};
+			this.awaiting = 0;
+			var wire = this;
+			this.comm.on('data', function(d){
+				if(wire.queueCBs.fulfill){
+					wire.buff.push(d);
+					var valid = wire.validate();
+					if(valid === true){
+						var fulfill = wire.queueCBs.fulfill;
+						wire.queueCBs = {fulfill: false, reject: false};
+						var payload = wire.buff.slice(2, -1);
+						wire.buff = [];
+						//console.log(payload);
+						fulfill(payload);
+					}else if(valid !== false){
+						//console.log([valid]);
+						wire.buff = [];
+						var reject = wire.queueCBs.reject;
+						wire.queueCBs = {fulfill: false, reject: false};
+						reject({'I2C Error': valid});
+					}else{
+						//console.log('processing buffer');
+					}
+				}else{
+					console.log('no callback');
+				}
+			});
+		}
+		readBytes(addr, reg, length){
+			return this.send([addr*2, reg, 0], [addr*2+1, length]);
+		}
+		readByte(addr, reg){
+			return this.readBytes(addr, reg, 1);
+		}
+		writeByte(addr, byte){
+			return this.send([addr*2, byte, 0]);
+		}
+		writeBytes(addr, reg, bytes){
+			if(bytes.constructor != Array){
+				return this.send([addr*2, reg, bytes, 0]);
+			}else{
+				var payload = [addr*2, reg];
+				payload.push.apply(payload, bytes);
+				payload.push(0);
+				return this.send(payload);
+			}
+		}
+		validate(){
+			if(this.buff.length == this.awaiting){
+				return true;
+			}
+			return false;
+		}
+		send(...payloads){
+			var wire = this,
+				p;
+			payloads.forEach((payload) => {
+				p = this.queue.add(() => {
+					return new Promise((fulfill, reject) => {
+						if(payload & 1) this.awaiting = payload[payload.length-1];
+						wire.comm.write(payload, (err) => {
+							if(err) reject(err);
+							else{
+								if(!(payload & 1)){
+									fulfill();
+								}else{
+									wire.queueCBs.reject = reject;
+									wire.queueCBs.fulfill = fulfill;
+								}
+							}
+						});
+					});
+				});
+			});
+			return p;
+		}
+	},
 	NcdSerialI2C: class NcdSerialI2C{
 		constructor(serial, bus){
 			this.comm = serial;
 			this.bus = bus+50;
-			this.returnTo = false;
 			this.buff = [];
 			this.queue = new Queue(1);
 			this.queueCBs = {fulfill: false, reject: false};

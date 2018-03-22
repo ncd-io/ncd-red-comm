@@ -10,16 +10,23 @@ module.exports = function(RED) {
     function NcdI2CConfig(n) {
         RED.nodes.createNode(this,n);
         this.bus = n.bus;
-		if(this.bus.indexOf('i2c-') == 0){
-			var port = parseInt(this.bus.split('-')[1]);
-			if(typeof i2cPool[port] == 'undefined') i2cPool[port] = new comms.NcdI2C(port);
-			this.i2c = i2cPool[port];
-		}else if(typeof i2cPool[this.bus] == 'undefined'){
-			var comm = new comms.NcdSerial(this.bus, 115200);
-			i2cPool[this.bus] = new comms.NcdSerialI2C(comm, 0);
-			this.i2c = i2cPool[this.bus];
-		}else{
-			this.i2c = i2cPool[this.bus];
+		this.addr = parseInt(n.addr);
+		switch(n.commType){
+			case 'standard':
+				var port = parseInt(this.bus.split('-')[1]);
+				if(typeof i2cPool[port] == 'undefined') i2cPool[port] = new comms.NcdI2C(port);
+				this.i2c = i2cPool[port];
+				break;
+			case 'usb':
+				var comm = new comms.NcdSerial(this.bus, 115200);
+				if(typeof i2cPool[port] == 'undefined') i2cPool[this.bus] = new comms.UsbI2C(comm);
+				this.i2c = i2cPool[port];
+				break;
+			case 'ncd-usb':
+				var comm = new comms.NcdSerial(this.bus, 115200);
+				if(typeof i2cPool[this.bus.'-'.this.addr] == 'undefined') i2cPool[this.bus.'-'.this.addr] = new comms.NcdSerialI2C(comm, this.addr);
+				this.i2c = i2cPool[this.bus.'-'.this.addr];
+				break;
 		}
     }
     RED.nodes.registerType("ncd-comm", NcdI2CConfig);
