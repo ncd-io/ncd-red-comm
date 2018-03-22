@@ -70,7 +70,7 @@ module.exports = {
 					if(valid === true){
 						var fulfill = wire.queueCBs.fulfill;
 						wire.queueCBs = {fulfill: false, reject: false};
-						var payload = wire.buff.slice(2, -1);
+						var payload = wire.buff;
 						wire.buff = [];
 						//console.log(payload);
 						fulfill(payload);
@@ -141,6 +141,7 @@ module.exports = {
 		constructor(serial, bus){
 			this.comm = serial;
 			this.bus = bus+50;
+			this.returnTo = false;
 			this.buff = [];
 			this.queue = new Queue(1);
 			this.queueCBs = {fulfill: false, reject: false};

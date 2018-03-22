@@ -24,8 +24,8 @@ module.exports = function(RED) {
 				break;
 			case 'ncd-usb':
 				var comm = new comms.NcdSerial(this.bus, 115200);
-				if(typeof i2cPool[this.bus.'-'.this.addr] == 'undefined') i2cPool[this.bus.'-'.this.addr] = new comms.NcdSerialI2C(comm, this.addr);
-				this.i2c = i2cPool[this.bus.'-'.this.addr];
+				if(typeof i2cPool[this.bus+'-'+this.addr] == 'undefined') i2cPool[this.bus+'-'+this.addr] = new comms.NcdSerialI2C(comm, this.addr);
+				this.i2c = i2cPool[this.bus+'-'+this.addr];
 				break;
 		}
     }
