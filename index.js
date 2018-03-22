@@ -43,11 +43,9 @@ module.exports = {
 			this.serial.on('open',function() {
 				var olderr = "";
 				if (obj.tout) { clearTimeout(obj.tout); }
-				//obj.serial.flush();
 				obj._emitter.emit('ready');
 			});
 			this.serial.on('data',function(d) {
-				//console.log(d);
 				for (var z=0; z<d.length; z++) {
 					obj._emitter.emit('data',d[z]);
 				}
@@ -221,13 +219,7 @@ module.exports = {
 				return this.queue.add(() => {
 					return new Promise((fulfill, reject) => {
 						wire.writeByte(addr, reg, bytes, (err) => {
-							if(err) reject({
-								func: "writeBytes",
-								addr: addr  ,
-								reg: reg,
-								bytes: bytes,
-								err: err
-							});
+							if(err) reject(err);
 							else{
 								fulfill();
 							}

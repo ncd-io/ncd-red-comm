@@ -23,7 +23,7 @@ module.exports = function(RED) {
 		}
     }
     RED.nodes.registerType("ncd-comm", NcdI2CConfig);
-	RED.httpAdmin.get("/ncd/i2c-bus/list", RED.auth.needsPermission('serial.read'), function(req,res) {
+	RED.httpAdmin.get("/ncd/i2c-bus/list/standard", RED.auth.needsPermission('serial.read'), function(req,res) {
 		var busses = [];
 		if(comms.hasI2C){
 			var cmd = execSync('i2cdetect -l');
@@ -34,16 +34,25 @@ module.exports = function(RED) {
 				}
 			});
 		}
-		sp.list().then((ports) => {
-			ports.forEach((p) => {
-				//if(p.manufacturer == 'FTDI') busses.push(p.comName);
-				busses.push(p.comName);
-			});
-		}).catch((err) => {
+		res.json(busses);
+	});
+	RED.httpAdmin.get("/ncd/i2c-bus/list/usb", RED.auth.needsPermission('serial.read'), function(req,res) {
+		getSerialDevices(false, res);
+	});
+	RED.httpAdmin.get("/ncd/i2c-bus/list/ncd-usb", RED.auth.needsPermission('serial.read'), function(req,res) {
+		getSerialDevices(true, res);
+	});
+}
 
-		}).then(() => {
-			res.json(busses);
+function getSerialDevices(ftdi, res){
+	var busses = [];
+	sp.list().then((ports) => {
+		ports.forEach((p) => {
+			if(p.manufacturer == 'FTDI' || !ftdi) busses.push(p.comName);
 		});
+	}).catch((err) => {
 
+	}).then(() => {
+		res.json(busses);
 	});
 }
