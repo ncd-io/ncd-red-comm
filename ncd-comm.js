@@ -47,7 +47,7 @@ module.exports = function(RED) {
 		getSerialDevices(false, res);
 	});
 	RED.httpAdmin.get("/ncd/i2c-bus/list/ncd-usb", RED.auth.needsPermission('serial.read'), function(req,res) {
-		getSerialDevices(true, res);
+		getSerialDevices(false, res);
 	});
 }
 

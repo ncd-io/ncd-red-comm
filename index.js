@@ -172,6 +172,7 @@ module.exports = {
 			});
 		}
 		readBytes(addr, reg, length){
+			//return this.send([addr*2+1, reg, length]);
 			return this.send([addr*2, reg, 0], [addr*2+1, length]);
 		}
 		readByte(addr, reg){
@@ -180,7 +181,7 @@ module.exports = {
 		writeByte(addr, byte){
 			return this.send([addr*2, byte, 0]);
 		}
-		writeBytes(addr, reg, bytes){
+		writeBytes(addr, reg, ...bytes){
 			if(bytes.constructor != Array){
 				return this.send([addr*2, reg, bytes, 0]);
 			}else{
