@@ -8,7 +8,7 @@
     },
     "repository" : {
 		"type" : "git",
-		"url" : "https://github.com/NCD-Red/ncd-red-comm"
+		"url" : "https://github.com/ncd-io/ncd-red-comm"
     },
 
     "author": "Trey Felton",
