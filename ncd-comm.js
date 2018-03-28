@@ -4,6 +4,7 @@ process.on('unhandledRejection', r => console.log(r));
 const execSync = require('child_process').execSync;
 const sp = require('serialport');
 const comms = require("./index.js");
+const ftdi = require('ftdi');
 
 module.exports = function(RED) {
 	var i2cPool = {};
@@ -15,11 +16,6 @@ module.exports = function(RED) {
 			case 'standard':
 				var port = parseInt(this.bus.split('-')[1]);
 				if(typeof i2cPool[port] == 'undefined') i2cPool[port] = new comms.NcdI2C(port);
-				this.i2c = i2cPool[port];
-				break;
-			case 'usb':
-				var comm = new comms.NcdSerial(this.bus, 115200);
-				if(typeof i2cPool[port] == 'undefined') i2cPool[this.bus] = new comms.UsbI2C(comm);
 				this.i2c = i2cPool[port];
 				break;
 			case 'ncd-usb':
@@ -44,7 +40,10 @@ module.exports = function(RED) {
 		res.json(busses);
 	});
 	RED.httpAdmin.get("/ncd/i2c-bus/list/usb", RED.auth.needsPermission('serial.read'), function(req,res) {
-		getSerialDevices(false, res);
+		ftdi.find(function(err, devices) {
+			devices.map((device) => device.locationId);
+			res.json(devices);
+		});
 	});
 	RED.httpAdmin.get("/ncd/i2c-bus/list/ncd-usb", RED.auth.needsPermission('serial.read'), function(req,res) {
 		getSerialDevices(false, res);

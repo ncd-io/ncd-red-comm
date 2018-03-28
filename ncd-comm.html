@@ -15,6 +15,8 @@
             return this.bus;
         },
 		oneditprepare: function() {
+
+			var config = this;
 			$('#node-config-input-commType').change(function(){
 				commType = $(this).val();
 				if(['standard', 'usb', 'ncd-usb'].indexOf(commType) < 0) return;
@@ -26,7 +28,7 @@
 								'value': bus,
 								'text': bus
 							});
-							if(bus == this.bus) option.attr('selected', 'selected');
+							if(bus == config.bus) option.attr('selected', 'selected');
 							option.appendTo('#node-config-input-bus');
 						});
 					}
@@ -39,7 +41,6 @@
 			});
 			if(['standard', 'usb', 'ncd-usb'].indexOf(this.commType) > -1){
 				if(this.commType != 'ncd-usb') $('.ncd-comm-addr').hide();
-				$('#node-config-input-commType').change();
 			}else{
 				$('.ncd-comm-addr').hide();
 			}
@@ -60,7 +61,6 @@
 		<select id="node-config-input-commType">
 			<option value="standard">I2C Bus</option>
 			<option value="ncd-usb">NCD USB</option>
-			<option value="usb">USB</option>
 		</select>
 	</div>
 
