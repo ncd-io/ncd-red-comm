@@ -1,5 +1,5 @@
 "use strict";
-process.on('unhandledRejection', r => console.log(r));
+//process.on('unhandledRejection', r => console.log(r));
 
 const execSync = require('child_process').execSync;
 const sp = require('serialport');
