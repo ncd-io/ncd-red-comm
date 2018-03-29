@@ -35,14 +35,10 @@ module.exports = function(RED) {
 					busses.push(bus);
 				}
 			});
+		}else{
+			console.log('I2C Not Supported')
 		}
 		res.json(busses);
-	});
-	RED.httpAdmin.get("/ncd/i2c-bus/list/usb", RED.auth.needsPermission('serial.read'), function(req,res) {
-		ftdi.find(function(err, devices) {
-			devices.map((device) => device.locationId);
-			res.json(devices);
-		});
 	});
 	RED.httpAdmin.get("/ncd/i2c-bus/list/ncd-usb", RED.auth.needsPermission('serial.read'), function(req,res) {
 		getSerialDevices(false, res);
@@ -53,7 +49,7 @@ function getSerialDevices(ftdi, res){
 	var busses = [];
 	sp.list().then((ports) => {
 		ports.forEach((p) => {
-			if(p.manufacturer == 'FTDI' || !ftdi) busses.push(p.comName);
+			busses.push(p.comName);
 		});
 	}).catch((err) => {
 
