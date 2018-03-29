@@ -4,7 +4,6 @@ process.on('unhandledRejection', r => console.log(r));
 const execSync = require('child_process').execSync;
 const sp = require('serialport');
 const comms = require("./index.js");
-const ftdi = require('ftdi');
 
 module.exports = function(RED) {
 	var i2cPool = {};
