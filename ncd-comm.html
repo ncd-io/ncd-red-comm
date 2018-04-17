@@ -12,10 +12,14 @@
         },
         label: function() {
 			if(this.name) return this.name;
+			var label = this.bus;
 			if(this.commType == 'ncd-usb'){
-				return this.bus + ' ('+this.addr+')';
+				label += ' ('+this.addr+')';
 			}
-            return this.bus;
+			if(this.useMux){
+				label += ' ( mux '+this.muxAddr+':'+this.muxPort+')';
+			}
+            return label;
         },
 		oneditprepare: function() {
 
