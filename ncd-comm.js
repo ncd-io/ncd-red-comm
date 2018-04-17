@@ -24,7 +24,7 @@ module.exports = function(RED) {
 				break;
 		}
 		if(n.useMux){
-			this.i2c = new comms.NcdMux(n.muxAddr, n.muxPort, this.i2c);
+			this.i2c = new comms.NcdMux(parseInt(n.muxAddr), parseInt(n.muxPort), this.i2c);
 		}
     }
     RED.nodes.registerType("ncd-comm", NcdI2CConfig);
