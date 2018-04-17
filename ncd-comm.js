@@ -23,6 +23,9 @@ module.exports = function(RED) {
 				this.i2c = i2cPool[this.bus+'-'+this.addr];
 				break;
 		}
+		if(config.useMux){
+			this.i2c = new comms.NcdMux(config.muxAddr, config.muxPort, this.i2c);
+		}
     }
     RED.nodes.registerType("ncd-comm", NcdI2CConfig);
 	RED.httpAdmin.get("/ncd/i2c-bus/list/standard", RED.auth.needsPermission('serial.read'), function(req,res) {
