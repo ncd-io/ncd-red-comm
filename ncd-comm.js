@@ -23,8 +23,8 @@ module.exports = function(RED) {
 				this.i2c = i2cPool[this.bus+'-'+this.addr];
 				break;
 		}
-		if(config.useMux){
-			this.i2c = new comms.NcdMux(config.muxAddr, config.muxPort, this.i2c);
+		if(n.useMux){
+			this.i2c = new comms.NcdMux(n.muxAddr, n.muxPort, this.i2c);
 		}
     }
     RED.nodes.registerType("ncd-comm", NcdI2CConfig);
