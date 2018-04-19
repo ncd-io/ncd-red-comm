@@ -7,4 +7,5 @@ When using Node-Red, this library provides a configuration node to supply I2C co
 This library provides classes for communicating with a native I2C bus (via the node i2c-bus package) and a USB to I2C converter available from [ncd.io](https://store.ncd.io/product/usb-to-i2c-converter-with-virtual-com-port-ft230xs/)
 
 Neat trick... run this in a bash console to install all of our ncd-red packages!
+
 `npm i $(npm search --parseable ncd-red | cut -f 1)`
