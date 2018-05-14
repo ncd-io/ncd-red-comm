@@ -1,3 +1,5 @@
+[![Build Status](https://semaphoreci.com/api/v1/zaphod-42/ncd-red-comm/branches/master/badge.svg)](https://semaphoreci.com/zaphod-42/ncd-red-comm)
+
 # NCD Comm
 
 This library provides the basic communication classes used by the ncd-red-* modules for ncd.io devices. You generally should not need to install this library, as it will be included as a dependency by other libraries as needed.
