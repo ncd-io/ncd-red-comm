@@ -8,7 +8,7 @@
 			addr: {value: 0, validate: RED.validators.number()},
 			useMux: {value: ""},
 			muxAddr: {value: 112, validate: RED.validators.number()},
-			muxPort: {value: 0, validate: RED.validators.number()}
+			muxPort: {value: "0", validate: RED.validators.number()}
         },
         label: function() {
 			if(this.name) return this.name;
