@@ -12,5 +12,6 @@ module.exports = {
 	NcdSerialI2C: require("./lib/NcdSerialI2C.js"),
 	NcdSettings: require("./lib/NcdSettings.js"),
 	NcdMux: require("./lib/NcdMux.js"),
-	NcdAes: require("./lib/NcdAes.js")
+	NcdAes: require("./lib/NcdAes.js"),
+	NcdDigiParser: require("./lib/NcdDigiParser.js")
 }
