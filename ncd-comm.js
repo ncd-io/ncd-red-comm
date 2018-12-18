@@ -1,10 +1,9 @@
 "use strict";
-process.on('unhandledRejection', r => console.log(r));
+//process.on('unhandledRejection', r => console.log(r));
 
 const execSync = require('child_process').execSync;
 const sp = require('serialport');
 const comms = require("./index.js");
-const ftdi = require('ftdi');
 
 module.exports = function(RED) {
 	var i2cPool = {};
@@ -24,6 +23,9 @@ module.exports = function(RED) {
 				this.i2c = i2cPool[this.bus+'-'+this.addr];
 				break;
 		}
+		if(n.useMux){
+			this.i2c = new comms.NcdMux(parseInt(n.muxAddr), parseInt(n.muxPort), this.i2c);
+		}
     }
     RED.nodes.registerType("ncd-comm", NcdI2CConfig);
 	RED.httpAdmin.get("/ncd/i2c-bus/list/standard", RED.auth.needsPermission('serial.read'), function(req,res) {
@@ -36,14 +38,10 @@ module.exports = function(RED) {
 					busses.push(bus);
 				}
 			});
+		}else{
+			console.log('I2C Not Supported')
 		}
 		res.json(busses);
-	});
-	RED.httpAdmin.get("/ncd/i2c-bus/list/usb", RED.auth.needsPermission('serial.read'), function(req,res) {
-		ftdi.find(function(err, devices) {
-			devices.map((device) => device.locationId);
-			res.json(devices);
-		});
 	});
 	RED.httpAdmin.get("/ncd/i2c-bus/list/ncd-usb", RED.auth.needsPermission('serial.read'), function(req,res) {
 		getSerialDevices(false, res);
@@ -54,7 +52,7 @@ function getSerialDevices(ftdi, res){
 	var busses = [];
 	sp.list().then((ports) => {
 		ports.forEach((p) => {
-			if(p.manufacturer == 'FTDI' || !ftdi) busses.push(p.comName);
+			busses.push(p.comName);
 		});
 	}).catch((err) => {
 

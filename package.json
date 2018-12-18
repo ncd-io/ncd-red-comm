@@ -1,26 +1,31 @@
 {
-    "name": "@ncd/ncd-red-comm",
-    "version": "1.1.2",
+    "name": "ncd-red-comm",
+    "version": "1.6.3",
     "description": "NCD Communications configuration node for node-red",
     "main": "index.js",
     "scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1"
     },
-    "repository" : {
-		"type" : "git",
-		"url" : "https://github.com/ncd-io/ncd-red-comm"
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ncd-io/ncd-red-comm"
     },
-
     "author": "Trey Felton",
-    "license": "ISC",
+    "license": "MIT",
     "node-red": {
-		"nodes": {
-			"ncd-comm": "ncd-comm.js"
-		}
+        "nodes": {
+            "ncd-comm": "ncd-comm.js"
+        }
     },
     "dependencies": {
-		"i2c-bus": "^3.0.0",
-		"promise-queue": "^2.2.5",
-		"serialport": "^6.0.0"
-    }
+        "promise-queue": "^2.2.5",
+        "serialport": "^6.2.0"
+    },
+    "optionalDependencies": {
+        "i2c-bus": "^3.1.0"
+    },
+    "bugs": {
+        "url": "https://github.com/ncd-io/ncd-red-comm/issues"
+    },
+    "homepage": "https://github.com/ncd-io/ncd-red-comm#readme"
 }
