@@ -1,7 +1,7 @@
 
 /*
 THIS FILE IS NOT FUNCTIONAL
-/*
+*/
 
 const comms = require('./index.js');
 const serial = require('serialport');

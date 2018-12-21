@@ -39,14 +39,14 @@ module.exports = function(RED) {
 				}
 			});
 		}else{
-			console.log('I2C Not Supported')
+			console.log('I2C Not Supported');
 		}
 		res.json(busses);
 	});
 	RED.httpAdmin.get("/ncd/i2c-bus/list/ncd-usb", RED.auth.needsPermission('serial.read'), function(req,res) {
 		getSerialDevices(false, res);
 	});
-}
+};
 
 function getSerialDevices(ftdi, res){
 	var busses = [];

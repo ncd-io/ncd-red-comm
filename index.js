@@ -14,4 +14,4 @@ module.exports = {
 	NcdMux: require("./lib/NcdMux.js"),
 	NcdAes: require("./lib/NcdAes.js"),
 	NcdDigiParser: require("./lib/NcdDigiParser.js")
-}
+};
