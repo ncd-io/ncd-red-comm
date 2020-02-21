@@ -22,7 +22,7 @@
         "serialport": "^7.1.5"
     },
     "optionalDependencies": {
-        "i2c-bus": "^3.1.0"
+        "i2c-bus": "^5.1.0"
     },
     "bugs": {
         "url": "https://github.com/ncd-io/ncd-red-comm/issues"
