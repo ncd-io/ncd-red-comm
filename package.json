@@ -1,6 +1,6 @@
 {
     "name": "ncd-red-comm",
-    "version": "1.6.9",
+    "version": "1.6.10",
     "description": "NCD Communications configuration node for node-red",
     "main": "index.js",
     "scripts": {
