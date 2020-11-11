@@ -1,7 +1,7 @@
 "use strict";
 //process.on('unhandledRejection', r => console.log(r));
 
-const execSync = require('child_process').execSync;
+const exec = require('child_process').exec;
 const sp = require('serialport');
 const comms = require("./index.js");
 
@@ -13,7 +13,7 @@ module.exports = function(RED) {
 		this.addr = parseInt(n.addr);
 		switch(n.commType){
 			case 'standard':
-				var port = parseInt(this.bus.split('-')[1]);
+				var port = this.bus == '_manual' ? parseInt(n.busManual) : parseInt(this.bus);
 				if(typeof i2cPool[port] == 'undefined') i2cPool[port] = new comms.NcdI2C(port);
 				this.i2c = i2cPool[port];
 				break;
@@ -31,17 +31,24 @@ module.exports = function(RED) {
 	RED.httpAdmin.get("/ncd/i2c-bus/list/standard", RED.auth.needsPermission('serial.read'), function(req,res) {
 		var busses = [];
 		if(comms.hasI2C){
-			var cmd = execSync('i2cdetect -l');
-			cmd.toString().split("\n").forEach((ln) => {
-				var bus = ln.toString().split('	')[0];
-				if(bus.indexOf('i2c') == 0){
-					busses.push(bus);
-				}
+			comms.I2CBusScan().then(res.json.bind(res)).catch(err => {
+				console.log(err);
+				res.json('Unable to find any I2C Busses.');
 			});
 		}else{
-			console.log('I2C Not Supported');
+			res.json('I2C Not Supported');
 		}
-		res.json(busses);
+	});
+	RED.httpAdmin.get("/ncd/i2c-bus/scan", RED.auth.needsPermission('serial.read'), function(req,res) {
+		var comm = RED.nodes.getNode(req.query.comm).i2c;
+		if(typeof comm.scan != 'undefined'){
+			comm.scan().then(res.json.bind(res)).catch((err) => {
+				console.error(err);
+				res.json([]);
+			});
+		}else{
+			res.json([]);
+		}
 	});
 	RED.httpAdmin.get("/ncd/i2c-bus/list/ncd-usb", RED.auth.needsPermission('serial.read'), function(req,res) {
 		getSerialDevices(false, res);

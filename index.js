@@ -6,6 +6,7 @@ try{
 }
 module.exports = {
 	hasI2C: i2c !== false,
+	I2CBusScan: require('./lib/I2CBusScan'),
 	NcdSerial: require("./lib/NcdSerial.js"),
 	NcdI2C: require("./lib/NcdI2C.js"),
 	NcdTCP: require("./lib/NcdTCP.js"),

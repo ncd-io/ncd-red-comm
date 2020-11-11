@@ -4,6 +4,7 @@
         defaults: {
 			name: {value: ""},
             bus: {value: ""},
+			busManual: {value: ""},
 			commType: {value: ""},
 			addr: {value: 0, validate: RED.validators.number()},
 			useMux: {value: ""},
@@ -12,7 +13,8 @@
         },
         label: function() {
 			if(this.name) return this.name;
-			var label = this.bus;
+			if(this.bus == '_manual') return 'i2c-'+this.busManual;
+			var label = 'i2c-'+this.bus;
 			if(this.commType == 'ncd-usb'){
 				label += ' ('+this.addr+')';
 			}
@@ -29,7 +31,14 @@
 				if(['standard', 'usb', 'ncd-usb'].indexOf(commType) < 0) return;
 				$('#node-config-input-bus option').remove();
 				$.getJSON('ncd/i2c-bus/list/'+commType, function(busses) {
-					if (busses.length !== 0) {
+					if(busses.constructor != Array){
+						$('#node-config-input-bus').hide().append($('<option/>',{
+							'value': '_manual',
+							'selected': 'selected'
+						}));
+						$('#node-config-input-busManual').show();
+
+					}else if (busses.length !== 0) {
 						busses.forEach((bus) => {
 							var option = $('<option/>',{
 								'value': bus,
@@ -38,6 +47,8 @@
 							if(bus == config.bus) option.attr('selected', 'selected');
 							option.appendTo('#node-config-input-bus');
 						});
+					}else{
+
 					}
 				});
 				if(commType == 'ncd-usb'){
@@ -76,6 +87,7 @@
         <select id="node-config-input-bus">
 			<option selected="selected">--Select Comm Type--</option>
 		</select>
+		<input id="node-config-input-busManual" style="display: none;" />
     </div>
 	<div class="form-row ncd-comm-addr">
         <label for="node-config-input-addr"><i class="icon-bookmark"></i> I2C Port</label>

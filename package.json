@@ -19,6 +19,7 @@
     },
     "dependencies": {
         "promise-queue": "^2.2.5",
+        "requeued": "^1.1.0",
         "serialport": "^7.1.5"
     },
     "optionalDependencies": {
