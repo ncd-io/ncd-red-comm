@@ -59,7 +59,7 @@ function getSerialDevices(ftdi, res){
 	var busses = [];
 	sp.list().then((ports) => {
 		ports.forEach((p) => {
-			busses.push(p.comName);
+			busses.push(p.path);
 		});
 	}).catch((err) => {
 

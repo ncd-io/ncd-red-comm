@@ -35,7 +35,7 @@ function getDevices(){
 
 function setDevice(input){
 	var i = parseInt(input);
-	device = new comms.NcdSerial(validDevices[i-1].comName, 115200);
+	device = new comms.NcdSerial(validDevices[i-1].path, 115200);
 	selectCommandType();
 }
 
