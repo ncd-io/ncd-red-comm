@@ -1,6 +1,6 @@
 {
     "name": "ncd-red-comm",
-    "version": "1.7.1",
+    "version": "1.7.2",
     "description": "NCD Communications configuration node for node-red",
     "main": "index.js",
     "scripts": {
@@ -20,10 +20,10 @@
     "dependencies": {
         "promise-queue": "^2.2.5",
         "requeued": "^1.1.0",
-        "serialport": "^7.1.5"
+        "serialport": "^9.2.4"
     },
     "optionalDependencies": {
-        "i2c-bus": "^5.1.0"
+        "i2c-bus": "^5.2.1"
     },
     "bugs": {
         "url": "https://github.com/ncd-io/ncd-red-comm/issues"
