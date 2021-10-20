@@ -17,17 +17,18 @@ process.stdin.on('data', function (text) {
 });
 
 function getDevices(){
+	console.log('getting devices');
 	return new Promise((fulfill, reject) => {
-		serial.list((err, devices) => {
-			if(err){
-				reject(err);
-			}else{
-				devices.forEach((d) => {
-					if(d.manufacturer == 'FTDI') valid.push(d);
-				});
-				if(validDevices.length == 0) reject('No devices found');
-				else fulfill();
-			}
+		serial.list().then(devices => {
+			console.log('list returned');
+			devices.forEach((d) => {
+				if(d.manufacturer == 'FTDI') validDevices.push(d);
+			});
+			if(validDevices.length == 0) reject('No devices found');
+			else fulfill(validDevices);
+		}).catch(err => {
+			console.log(err);
+			reject(err);
 		});
 	});
 }
@@ -65,3 +66,4 @@ function selectCommandType(){
 	console.log('	1: write');
 	console.log('	2: read');
 }
+selectDevice();
